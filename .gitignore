@@ -1,7 +1,15 @@
 .venv/
 __pycache__/
-data/images/
+data/
+dataset/
+photos/
+camera_preview/
+runs/
 outputs/
 *.pt
+*.pth
 .idea/
 .DS_Store
+fastener/
+_old/
+shots/
