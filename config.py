@@ -18,5 +18,5 @@ IMAGE_SIZE = 640
 BATCH = 16          # 메모리가 부족하면 8 로 줄인다
 
 # ---------------------------------------------------------------- 카메라
-CAMERA_INDEX = 0    # list_cameras.py 로 확인한 번호. Camo 아이패드면 보통 1
+CAMERA_INDEX = 1    # Camo(폰). 내장 카메라는 0. list_cameras.py로 확인
 CONF_THRESHOLD = 0.40   # 이 값보다 확신도가 낮은 상자는 표시하지 않는다

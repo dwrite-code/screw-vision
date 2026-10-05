@@ -18,6 +18,8 @@ from collections import Counter
 from pathlib import Path
 
 import cv2
+import numpy as np
+from PIL import Image, ImageDraw, ImageFont
 from ultralytics import YOLO
 
 import config
@@ -56,6 +58,41 @@ def summarize(result) -> str:
     if not counts:
         return "인식된 부품 없음"
     return ", ".join(f"{k} {v}" for k, v in counts.most_common())
+
+
+# OpenCV 의 putText 는 영문만 그릴 수 있어 한글이 ??? 로 나온다.
+# 그래서 글자만 PIL 로 그린 뒤 다시 OpenCV 이미지로 되돌린다.
+FONT_CANDIDATES = [
+    "/System/Library/Fonts/AppleSDGothicNeo.ttc",
+    "/System/Library/Fonts/Supplemental/AppleGothic.ttf",
+    "C:/Windows/Fonts/malgun.ttf",
+    "/usr/share/fonts/truetype/nanum/NanumGothic.ttf",
+]
+
+
+def load_font(size: int = 22):
+    for path in FONT_CANDIDATES:
+        if Path(path).exists():
+            try:
+                return ImageFont.truetype(path, size)
+            except Exception:
+                continue
+    try:
+        return ImageFont.load_default(size=size)
+    except TypeError:        # 구버전 Pillow
+        return ImageFont.load_default()
+
+
+FONT = load_font(22)
+
+
+def draw_status(frame, text: str):
+    """화면 위쪽에 상태 한 줄을 그린다. 배경이 밝아도 읽히도록 어두운 띠를 깐다."""
+    img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+    d = ImageDraw.Draw(img, "RGBA")
+    d.rectangle([0, 0, img.width, 44], fill=(20, 22, 25, 190))
+    d.text((14, 10), text, font=FONT, fill=(120, 240, 170))
+    return cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
 
 
 def main() -> None:
@@ -118,10 +155,7 @@ def main() -> None:
         fps = 0.9 * fps + 0.1 * (1.0 / max(now - last, 1e-6))
         last = now
 
-        cv2.putText(view, f"{summarize(res)}   |   {fps:.0f} fps",
-                    (12, 28), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), 4)
-        cv2.putText(view, f"{summarize(res)}   |   {fps:.0f} fps",
-                    (12, 28), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (80, 230, 140), 1)
+        view = draw_status(view, f"{summarize(res)}   |   {fps:.0f} fps")
 
         cv2.imshow("screw detect", view)
 

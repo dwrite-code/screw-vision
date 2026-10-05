@@ -13,3 +13,5 @@ outputs/
 fastener/
 _old/
 shots/
+data_raw/
+data_cls/
