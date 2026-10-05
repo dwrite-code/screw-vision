@@ -27,8 +27,3 @@ combo-screw, flat-screw, hex-bolt, hex-screw, phillips-screw, square-screw, unde
 
 규격(M4x10 vs M4x12)은 구분하지 못한다. 공개 데이터셋에 그 라벨이 없기 때문이다.
 규격 구분은 직접 찍은 사진으로 따로 학습해야 한다 (`classify/` 참고).
-
-## 보관 폴더
-
-- `classify/` — 분류 방식 코드. 규격 구분 단계에서 쓴다. import 경로 조정 필요.
-- `_old/` — 쓰지 않는 파일. `_old/data`(1.3GB)는 라벨 없는 캐글 이미지라 지워도 된다.
